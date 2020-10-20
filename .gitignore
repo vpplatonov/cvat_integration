@@ -1,3 +1,12 @@
 .idea
 .benchmarks
 .pytest_cache
+
+# Ignore temporary files
+docker-compose.override.yml
+__pycache__
+*.pyc
+._*
+.coverage
+
+.DS_Store
