@@ -1,0 +1,48 @@
+apiVersion: "nuclio.io/v1"
+kind: NuclioFunction
+metadata:
+  name: opencv.ellipse_detector
+  namespace: cvat
+  annotations:
+    name: Ellipse Detector via OpenCV 3
+    type: detector
+    framework: OpenCV
+    spec: |
+      [
+        { "id": 0, "name": "Ellipse" }
+      ]
+
+spec:
+  description: |
+    An implementation of Ellipse Detector on Python 3, OpenCV 3.4.11.
+
+  runtime: "python:3.6"
+  handler: main:handler
+  eventTimeout: 30s
+  env:
+    - name: ELLIPSE_DETECTOR
+      value: /opt/nuclio/Ellipse_Detector
+  build:
+    image: cvat/opencv.ellipse_detector
+    baseImage: jjanzic/docker-python3-opencv
+    directives:
+      postCopy:
+      - kind: WORKDIR
+        value: /opt/nuclio
+      - kind: RUN
+        value: pip3 install pillow pyyaml
+
+  triggers:
+    myHttpTrigger:
+      maxWorkers: 2
+      kind: "http"
+      workerAvailabilityTimeoutMilliseconds: 10000
+      attributes:
+        maxRequestBodySize: 33554432 # 32MB
+
+  platform:
+    attributes:
+      processorMountMode: volume
+      restartPolicy:
+        name: always
+        maximumRetryCount: 3
