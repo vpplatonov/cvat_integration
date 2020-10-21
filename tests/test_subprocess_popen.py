@@ -1,6 +1,15 @@
 import subprocess
 import pexpect
 
+ELLIPSE_PARAM = dict(
+    _xc=626,
+    _yc=381,
+    _a=198,
+    _b=40,
+    _rad=3.141593,
+    _score=0.67299813,
+)
+
 
 def exec_spawn(cmd):
     """Read subprocess output and yield each line ended with expect()
@@ -68,6 +77,7 @@ if __name__ == "__main__":
         '-P', '.',
         '-M', '9'
     ]
+    ell_keys = list(ELLIPSE_PARAM.keys())
 
     try:
         # for line in exec_spawn(command):
@@ -75,7 +85,12 @@ if __name__ == "__main__":
         for line in execute(command):
             ell = line.split(b"\t")
             if ell[0].decode('utf-8') == 'ellipse':
-                ellipses.append(' '.join([el.decode('utf-8').strip() for el in ell[1:]]))
+                ellipses.append(
+                    # ' '.join([el.decode('utf-8').strip() for el in ell[1:]])
+                    {ell_keys[key]: el.decode('utf-8').strip()
+                     for key, el in enumerate(ell[1:])}
+                )
+
         for ell in ellipses:
             print(ell)
 
