@@ -34,3 +34,8 @@ $ python tests/test_subprocess_popen.py
 {'_xc': '212.087', '_yc': '225.196', '_a': '26', '_b': '20.54', '_rad': '2.70526', '_score': '0.858707'}
 {'_xc': '97.3799', '_yc': '165.463', '_a': '24', '_b': '16.56', '_rad': '2.58309', '_score': '0.853357'}
 ```
+
+## test
+```
+$ pytest tests/test_subprocess_popen.py 
+```

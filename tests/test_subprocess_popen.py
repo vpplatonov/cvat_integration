@@ -1,5 +1,12 @@
-import subprocess
+import cv2
+import os
 import pexpect
+import pytest
+import subprocess
+import sys
+
+sys.path.append(os.path.abspath('serverless/opencv/ellipse_detection/nuclio'))
+from model_loader import ellipse_detection_in_subprocess
 
 ELLIPSE_PARAM = dict(
     _xc=626,
@@ -9,6 +16,19 @@ ELLIPSE_PARAM = dict(
     _rad=3.141593,
     _score=0.67299813,
 )
+
+
+@pytest.fixture()
+def loaded_image():
+    image = cv2.imread('images/027_0003.jpg')
+    return image
+
+
+def test_model_loader(loaded_image):
+    ellipses = ellipse_detection_in_subprocess(loaded_image)
+    assert isinstance(ellipses, list)
+    assert isinstance(ellipses[0], dict)
+    assert ellipses[0].keys() == ELLIPSE_PARAM.keys()
 
 
 def exec_spawn(cmd):

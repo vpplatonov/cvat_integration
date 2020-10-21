@@ -44,7 +44,7 @@ def execute(cmd):
 def ellipse_detection_in_subprocess(image):
     ellipses = []
     command = [
-        'serverless/opencv/ellipse_detection/bin/ellipse_detector',
+        'ellipse_detector',
         '-N', 'image_frame.jpg',
         '-S', '0.85',
         '-P', '.',
@@ -52,6 +52,7 @@ def ellipse_detection_in_subprocess(image):
     ]
     ell_keys = list(ELLIPSE_PARAM.keys())
 
+    os.makedirs('images',exist_ok=True)
     cv2.imwrite('images/image_frame.jpg', image)
 
     for line in execute(command):
