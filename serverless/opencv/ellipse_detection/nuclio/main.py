@@ -27,7 +27,7 @@ def handler(context, event):
     context.logger.info("Run OpenCV Ellipse Detector")
     data = event.body
     buf = io.BytesIO(base64.b64decode(data["image"].encode('utf-8')))
-    threshold = float(data.get("threshold", 0.65))
+    threshold = float(data.get("threshold", 0.85))
     image = Image.open(buf)
 
     results = context.user_data.model_handler.infer(np.array(image), threshold)
