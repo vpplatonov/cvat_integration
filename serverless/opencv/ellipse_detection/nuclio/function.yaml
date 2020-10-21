@@ -31,6 +31,8 @@ spec:
         value: /opt/nuclio
       - kind: RUN
         value: pip3 install pillow pyyaml
+      - kind: RUN
+        value: cp opencv/ellipse_detection/bin/ellipse_detector /usr/local/bin
 
   triggers:
     myHttpTrigger:

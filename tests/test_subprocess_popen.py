@@ -25,8 +25,11 @@ def loaded_image():
 
 
 def test_model_loader(loaded_image):
+
     ellipses = ellipse_detection_in_subprocess(loaded_image)
+
     assert isinstance(ellipses, list)
+    assert len(ellipses) == 5
     assert isinstance(ellipses[0], dict)
     assert ellipses[0].keys() == ELLIPSE_PARAM.keys()
 

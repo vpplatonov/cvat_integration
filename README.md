@@ -36,6 +36,7 @@ $ python tests/test_subprocess_popen.py
 ```
 
 ## test
+before test copy serverless/opencv/ellipse_detection/bin/ellipse_detector into ~/bin dir OR /usr/local/bin
 ```
 $ pytest tests/test_subprocess_popen.py 
 ```
