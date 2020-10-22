@@ -110,7 +110,7 @@ if __name__ == "__main__":
             if ell[0].decode('utf-8') == 'ellipse':
                 ellipses.append(
                     # ' '.join([el.decode('utf-8').strip() for el in ell[1:]])
-                    {ell_keys[key]: el.decode('utf-8').strip()
+                    {ell_keys[key]: (int(float(el.decode('utf-8').strip())) if key < 4 else float(el.decode('utf-8').strip()))
                      for key, el in enumerate(ell[1:])}
                 )
 

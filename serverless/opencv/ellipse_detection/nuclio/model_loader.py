@@ -59,7 +59,7 @@ def ellipse_detection_in_subprocess(image):
         ell = line.split(b"\t")
         if ell[0].decode('utf-8') == 'ellipse':
             ellipses.append(
-                {ell_keys[key]: el.decode('utf-8').strip()
+                {ell_keys[key]: (int(float(el.decode('utf-8').strip())) if key < 4 else float(el.decode('utf-8').strip()))
                  for key, el in enumerate(ell[1:])}
            )
 
