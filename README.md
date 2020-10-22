@@ -43,6 +43,7 @@ $ pytest tests/test_subprocess_popen.py
 
 ## Deploy
 ### Docker build
+[https://hub.docker.com/r/jjanzic/docker-python3-opencv/dockerfile]
 ```
 $ docker build -f docker/dockerfile --tag jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 .
 ```
