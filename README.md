@@ -57,7 +57,5 @@ $ ./deploy.sh
 $ docker exec -it nuclio-nuclio-opencv.ellipse_detector ellipse_detector -N 027_0003.jpg  -S 0.85 -P . -M 9
 ```
 
-
-
-
-
+### Up CVAT
+[https://github.com/openvinotoolkit/cvat/tree/develop/components/serverless]
