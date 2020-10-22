@@ -40,3 +40,23 @@ before test copy serverless/opencv/ellipse_detection/bin/ellipse_detector into ~
 ```
 $ pytest tests/test_subprocess_popen.py 
 ```
+
+## Deploy
+### Docker build
+```
+$ docker build -f docker/dockerfile --tag jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 .
+```
+### nucleo deploy
+```
+$ cd serverless/
+$ ./deploy.sh
+```
+### Test inside docker
+```
+$ docker exec -it nuclio-nuclio-opencv.ellipse_detector ellipse_detector -N 027_0003.jpg  -S 0.85 -P . -M 9
+```
+
+
+
+
+

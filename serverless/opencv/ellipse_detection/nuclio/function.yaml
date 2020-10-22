@@ -24,7 +24,7 @@ spec:
       value: /opt/nuclio/Ellipse_Detector
   build:
     image: cvat/opencv.ellipse_detector
-    baseImage: jjanzic/docker-python3-opencv
+    baseImage: jjanzic/docker-python3-opencv:contrib-opencv-3.4.11
     directives:
       postCopy:
       - kind: WORKDIR
@@ -32,7 +32,7 @@ spec:
       - kind: RUN
         value: pip3 install pillow pyyaml
       - kind: RUN
-        value: cp opencv/ellipse_detection/bin/ellipse_detector /usr/local/bin
+        value: cp ellipse_detector /usr/local/bin
 
   triggers:
     myHttpTrigger:
