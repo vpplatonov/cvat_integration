@@ -1,7 +1,6 @@
 # cvat_integration
 
-## run ellipse_detector
-[https://github.com/vpplatonov/ellipse_detector]
+## run [ellipse_detector](https://github.com/vpplatonov/ellipse_detector)
 -N image Name
 -D DataSet Name
 -S The threshold of ellipse score
@@ -10,7 +9,7 @@
 -M The method id
 -P Working Directory
 ```
-$ serverless/opencv/ellipse_detection/bin/ellipse_detector  -N 027_0003.jpg  -S 0.85 -P . -M 9
+$ serverless/opencv/ellipse_detection/bin/ellipse_detector -N 027_0003.jpg  -S 0.85 -P . -M 9
 
 ellipse 236.69  155.871 24      17.52   2.94961 0.971709
 ellipse 311.22  246.163 27      20.25   3.00197 0.931649
@@ -43,8 +42,7 @@ $ pytest tests/test_subprocess_popen.py
 ```
 
 ## Deploy
-### Docker build
-[https://hub.docker.com/r/jjanzic/docker-python3-opencv/dockerfile]
+### Docker [build](https://hub.docker.com/r/jjanzic/docker-python3-opencv/dockerfile)
 ```
 $ docker build -f docker/dockerfile --tag jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 .
 ```
@@ -59,4 +57,4 @@ $ docker exec -it nuclio-nuclio-opencv.ellipse_detector ellipse_detector -N 027_
 ```
 
 ### Up CVAT
-[https://github.com/openvinotoolkit/cvat/tree/develop/components/serverless]
+[start CVAT](https://github.com/openvinotoolkit/cvat/tree/develop/components/serverless)
