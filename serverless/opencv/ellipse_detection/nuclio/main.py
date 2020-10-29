@@ -26,11 +26,22 @@ def init_context(context):
 def handler(context, event):
     context.logger.info("Run OpenCV Ellipse Detector")
     data = event.body
-    buf = io.BytesIO(base64.b64decode(data["image"].encode('utf-8')))
-    threshold = float(data.get("threshold", 0.65))
-    image = Image.open(buf)
+    threshold = 0.75
+    try:
+        buf = io.BytesIO(base64.b64decode(data["image"].encode('utf-8')))
+        threshold = float(data.get("threshold", threshold))
+        image = Image.open(buf)
+        del data["image"]
+        context.logger.info(data)
+    except KeyError:
+        image = []
 
-    results = context.user_data.model_handler.infer(np.array(image), threshold)
+    results = context.user_data.model_handler.infer(
+        np.array(image),
+        threshold,
+        context.logger,
+    )
+    context.logger.info(results)
 
     return context.Response(
         body=json.dumps(results),

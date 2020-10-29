@@ -32,11 +32,11 @@ spec:
       - kind: RUN
         value: pip3 install pillow pyyaml
       - kind: RUN
-        value: cp ellipse_detector /usr/local/bin
+        value: cp ellipse_detector AAMED /usr/local/bin
 
   triggers:
     myHttpTrigger:
-      maxWorkers: 2
+      maxWorkers: 4
       kind: "http"
       workerAvailabilityTimeoutMilliseconds: 10000
       attributes:

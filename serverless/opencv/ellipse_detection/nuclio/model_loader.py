@@ -5,6 +5,7 @@
 import cv2
 import os
 import subprocess
+import numpy as np
 
 ELLIPSE_PARAM = dict(
     _xc=626,
@@ -43,27 +44,38 @@ def execute(cmd):
 
 def ellipse_detection_in_subprocess(image):
     ellipses = []
-    command = [
-        'ellipse_detector',
-        '-N', 'image_frame.jpg',
-        '-S', '0.85',
-        '-P', '.',
-        '-M', '9'
-    ]
     ell_keys = list(ELLIPSE_PARAM.keys())
+    if image.shape[0]:
+        # command = [
+        #     'ellipse_detector',
+        #     '-N', 'image_frame.jpg',
+        #     '-S', '0.85',
+        #     '-P', '.',
+        #     '-M', '9'
+        # ]
+        command = [
+            'AAMED',
+            'image_frame.jpg'
+        ]
 
-    os.makedirs('images',exist_ok=True)
-    cv2.imwrite('images/image_frame.jpg', image)
+        os.makedirs('images', exist_ok=True)
+        cv2.imwrite('images/image_frame.jpg', image)
+
+    else:
+        command = [
+            'AAMED',
+            '027_0003.jpg'
+        ]
 
     for line in execute(command):
         ell = line.split(b"\t")
         if ell[0].decode('utf-8') == 'ellipse':
-            ellipses.append(
-                {ell_keys[key]: (int(float(el.decode('utf-8').strip())) if key < 4 else float(el.decode('utf-8').strip()))
+            ellipse = {ell_keys[key]: (int(float(el.decode('utf-8').strip())) if key < 4 else float(el.decode('utf-8').strip()))
                  for key, el in enumerate(ell[1:])}
-           )
+            ellipses.append(ellipse)
 
-    os.remove('images/image_frame.jpg')
+    if image.shape[0]:
+        os.remove('images/image_frame.jpg')
 
     return ellipses
 
@@ -85,15 +97,22 @@ class ModelLoader:
 
         self.model = EllipseDetector()
 
-    def infer(self, image, threshold=0.85):
+    def infer(self, image, threshold=0.85, logger=None):
+
         output = self.model.detect([image])[0]
+        r_thrd = 0
+        if image.shape[0]:
+            (h, w) = image.shape[:2]
+            r_thrd = w / 70  # all ellipse with r < 30 are noise
 
         results = []
         for i in range(len(output)):
             class_id = 0
             xc, yc, a, b, rad, score = output[i].values()
+            if logger is not None:
+                logger.info(f"xc {xc}, yc {yc}, a {a}, b {b}, rad {rad}, score {score}")
 
-            if score >= threshold:
+            if score >= threshold and b > r_thrd:
                 contour = cv2.ellipse2Poly(
                     (xc, yc),
                     (a, b),
@@ -103,6 +122,14 @@ class ModelLoader:
                     int(360 / self.num_points)
                 )
                 label = self.labels[class_id]
+
+                # filter all points left from center
+                poli_left = np.array([np.concatenate((point, np.array([int(i)])))
+                                      for i, point in enumerate(contour) if point[0] < xc])
+                idx = int(poli_left[np.absolute(poli_left[:, 1] - yc).argmin()][2])
+                # reorganize poligon
+                poligon_first = [point for point in contour[idx:-1]]
+                contour = np.array(poligon_first + [point for point in contour[:idx]] + [poligon_first[0]])
 
                 results.append({
                     "confidence": str(score),

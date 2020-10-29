@@ -44,7 +44,7 @@ $ pytest tests/test_subprocess_popen.py
 ## Deploy
 ### Docker [build](https://hub.docker.com/r/jjanzic/docker-python3-opencv/dockerfile)
 ```
-$ docker build -f docker/dockerfile --tag jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 .
+$ docker build -f docker/Dockerfile --tag jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 .
 ```
 ### nucleo deploy
 ```
@@ -57,4 +57,11 @@ $ docker exec -it nuclio-nuclio-opencv.ellipse_detector ellipse_detector -N 027_
 ```
 
 ### Up CVAT
-[start CVAT](https://github.com/openvinotoolkit/cvat/tree/develop/components/serverless)
+[start CVAT with serverless function](https://github.com/openvinotoolkit/cvat/tree/develop/components/serverless)
+
+```
+nuctl deploy --project-name cvat \
+    --path `pwd`/openvino/omz/public/yolo-v3-tf/nuclio \
+    --volume `pwd`/openvino/common:/opt/nuclio/common \
+    --platform local
+```

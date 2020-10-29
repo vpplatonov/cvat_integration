@@ -33,7 +33,7 @@ def get_points_from_ellipse(ellipse):
 
 
 if __name__ == '__main__':
-    image = cv2.imread('../ellipse-detector/image/soccer_frame_1.jpg')
+    image = cv2.imread('../ellipse-detector/images/soccer_frame_1.jpg')
 
     cv2.imshow('Ellipse_to_Poligon', image)
     cv2.waitKey(0)
@@ -42,7 +42,21 @@ if __name__ == '__main__':
     # poligon = get_points_from_ellipse(ellipse=((xc, yc), (a, b), rad * 180.0 / 3.1415926))
 
     num_points = 15
-    poligon = cv2.ellipse2Poly((xc, yc), (a, b), int(rad * 180.0 / 3.1415926), 0, 360, int(360 / num_points))
+    poligon = cv2.ellipse2Poly(
+        (xc, yc),
+        (a, b),
+        int(rad * 180.0 / 3.1415926),
+        0, 360,
+        int(360 / num_points)
+    )
+
+    # filter all points left from center
+    poli_left = np.array([np.concatenate((point, np.array([int(i)])))
+                          for i, point in enumerate(poligon) if point[0] < xc])
+    idx = int(poli_left[np.absolute(poli_left[:, 1] - yc).argmin()][2])
+    # reorganize poligon
+    poligon_first = [point for point in poligon[idx:-1]]
+    poligon = np.array(poligon_first + [point for point in poligon[:idx]] + [poligon_first[0]])
 
     # img = cv2.fillPoly(image, pts=[poligon], color=(0, 0, 255))
     img = cv2.drawContours(image, contours=[poligon], contourIdx=-1, color=(0, 0, 255), thickness=2)
