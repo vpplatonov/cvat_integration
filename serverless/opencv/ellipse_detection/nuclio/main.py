@@ -31,8 +31,6 @@ def handler(context, event):
         buf = io.BytesIO(base64.b64decode(data["image"].encode('utf-8')))
         threshold = float(data.get("threshold", threshold))
         image = Image.open(buf)
-        del data["image"]
-        context.logger.info(data)
     except KeyError:
         image = []
 

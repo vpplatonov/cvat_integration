@@ -65,3 +65,36 @@ nuctl deploy --project-name cvat \
     --volume `pwd`/openvino/common:/opt/nuclio/common \
     --platform local
 ```
+
+### Check function 
+```
+$ nuctl invoke opencv.ellipse_detector --method POST --body '{}' --content-type "application/json" --platform local
+```
+OR
+
+```
+$ nuctl get functions opencv.ellipse_detector --platform local
+  NAMESPACE |          NAME           | PROJECT | STATE | NODE PORT | REPLICAS  
+  nuclio    | opencv.ellipse_detector | cvat    | ready |     32769 | 1/1 
+$ curl -X POST -d "{}" -H "Content-Type: application/json" http://localhost:32769
+```
+
+OR run container with /bin.bash
+```
+$ docker run -it -v /home/vplatonov/workspace/globallogic/sport_radar/Pan-tilt-zoom-SLAM/:/home/PTZ-SLAM jjanzic/docker-python3-opencv:contrib-opencv-3.4.11 /bin/bash
+```
+
+
+#### Appendix
+##### 500 server error
+run nucleo container separately 
+```
+docker run -d -p 172.20.15.32:8080:8070 -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp --name nuclio quay.io/nuclio/dashboard:stable-amd64
+```
+
+connect nucleo container to cvat_default network https://docs.docker.com/engine/reference/commandline/network_connect/
+```
+docker network connect cvat_default nuclio
+```
+
+if linux server was rebooted - start stop function inside nuclio dashboard (qui)
