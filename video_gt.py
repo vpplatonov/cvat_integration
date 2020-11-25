@@ -1,6 +1,18 @@
 import cv2 as cv
 
 from dumps.sequence_manager import SequenceManager
+from ellipse_detector import EllipseDetector
+
+
+def cv_draw_points(points, frame, color=(0, 255, 0), thickness=2):
+    for idx in range(0, len(points) - 1):
+        cv.line(
+            frame,
+            (points[idx][0], points[idx][1]),
+            (points[idx + 1][0], points[idx + 1][1]),
+            color=color,
+            thickness=thickness
+        )
 
 
 def gt_draw_object(gt_obj, frame, color=(0, 255, 0), thickness=2):
@@ -13,14 +25,7 @@ def gt_draw_object(gt_obj, frame, color=(0, 255, 0), thickness=2):
     :return:
     """
     points = list(gt_obj.values())[0]
-    for idx in range(0, len(points) - 1):
-        cv.line(
-            frame,
-            (points[idx][0], points[idx][1]),
-            (points[idx + 1][0], points[idx + 1][1]),
-            color=color,
-            thickness=thickness
-        )
+    cv_draw_points(points, frame, color=(0, 255, 0), thickness=2)
 
 
 if __name__ == "__main__":
@@ -28,6 +33,7 @@ if __name__ == "__main__":
     video_file = '../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
 
     sm = SequenceManager(video_path=video_file, ground_truth_path=gt_annotations_file)
+    ellipse_detector = EllipseDetector()
 
     while True:
         sm.find_next_gt_frame()
@@ -36,7 +42,14 @@ if __name__ == "__main__":
         if frame is None:
             break
 
+        # run detector
+        results = ellipse_detector.detect(frame, width=sm.w)
+
         # draw gt on image
+        for ellipse in results:
+            points = ellipse_detector.get_points_from_ellipse(ellipse)
+            cv_draw_points(points, frame, color=(0, 0, 255), thickness=2)
+
         for key in gt.keys():
             if key == 'frame':
                 continue
@@ -44,3 +57,6 @@ if __name__ == "__main__":
 
         cv.imshow('frames', frame)
         cv.waitKey(1)
+
+    cv.destroyAllWindows()
+    sm.cap.release()

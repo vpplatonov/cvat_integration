@@ -97,13 +97,13 @@ class ModelLoader:
 
         self.model = EllipseDetector()
 
-    def infer(self, image, threshold=0.85, logger=None):
+    def infer(self, image, threshold=0.85, r_thrd=0, logger=None):
 
         output = self.model.detect([image])[0]
-        r_thrd = 0
         if image.shape[0]:
             (h, w) = image.shape[:2]
-            r_thrd = w / 70  # all ellipse with r < 30 are noise
+            if r_thrd == 0:
+                r_thrd = w / 70  # all ellipse with r < 30 are noise
 
         results = []
         for i in range(len(output)):

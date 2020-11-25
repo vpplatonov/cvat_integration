@@ -16,8 +16,8 @@ class SequenceManager:
 
         self.cap = cv.VideoCapture(video_path)
         self.frames_count = int(self.cap.get(cv.CAP_PROP_FRAME_COUNT))
-        w = self.cap.get(cv.CAP_PROP_FRAME_WIDTH)
-        h = self.cap.get(cv.CAP_PROP_FRAME_HEIGHT)
+        self.w = self.cap.get(cv.CAP_PROP_FRAME_WIDTH)
+        self.h = self.cap.get(cv.CAP_PROP_FRAME_HEIGHT)
 
         # find first frame @id for start
         self.current_frame = 0
