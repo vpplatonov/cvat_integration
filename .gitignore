@@ -9,4 +9,5 @@ __pycache__
 ._*
 .coverage
 
+*.json
 .DS_Store

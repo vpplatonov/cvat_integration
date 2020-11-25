@@ -69,6 +69,4 @@ class SequenceManager:
         if not success:
             return None
 
-        # self.current_frame = self.cap.get(cv.CAP_PROP_POS_FRAMES)
-
         return frame

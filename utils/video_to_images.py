@@ -2,6 +2,12 @@ import cv2 as cv
 
 
 def set_stream_frame(cap, frame_num):
+    """
+    if cap.set() do not work
+    :param cap:
+    :param frame_num:
+    :return:
+    """
     if frame_num == 0:
         return
 
@@ -9,7 +15,8 @@ def set_stream_frame(cap, frame_num):
     current_frame = cap.get(cv.CAP_PROP_POS_FRAMES)
     if current_frame < frame_num:
         while True:
-            success, frame = cap.read()
+            # change read() to grab() / retrieve()
+            success, frame = cap.grab()
             if not success:
                 raise Exception('cant read frames')
             if cap.get(cv.CAP_PROP_POS_FRAMES) == frame_num:

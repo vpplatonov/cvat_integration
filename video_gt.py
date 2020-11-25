@@ -2,8 +2,29 @@ import cv2 as cv
 
 from dumps.sequence_manager import SequenceManager
 
+
+def gt_draw_object(gt_obj, frame, color=(0, 255, 0), thickness=2):
+    """
+    Draw tracked object @id on image
+    :param gt_obj: single track from annotation
+    :param frame: RGB
+    :param color: (0, 255, 0)
+    :param thickness of line
+    :return:
+    """
+    points = list(gt_obj.values())[0]
+    for idx in range(0, len(points) - 1):
+        cv.line(
+            frame,
+            (points[idx][0], points[idx][1]),
+            (points[idx + 1][0], points[idx + 1][1]),
+            color=color,
+            thickness=thickness
+        )
+
+
 if __name__ == "__main__":
-    gt_annotations_file = 'dumps/gt_cvat_for_video_1.1/annotations.json'
+    gt_annotations_file = 'dumps/gt_cvat_for_video_1.1/14701073_25831_5200_11200_mkv_annotations.json'
     video_file = '../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
 
     sm = SequenceManager(video_path=video_file, ground_truth_path=gt_annotations_file)
@@ -14,19 +35,12 @@ if __name__ == "__main__":
         frame = sm.get_frame()
         if frame is None:
             break
+
         # draw gt on image
-        for obj in gt.keys():
-            if obj == 'frame':
+        for key in gt.keys():
+            if key == 'frame':
                 continue
-            points = list(gt[obj].values())[0]
-            for idx in range(0, len(points) - 1):
-                cv.line(
-                    frame,
-                    (points[idx][0], points[idx][1]),
-                    (points[idx + 1][0], points[idx + 1][1]),
-                    color=(0, 255, 0),
-                    thickness=2
-                )
+            gt_draw_object(gt[key], frame)
 
         cv.imshow('frames', frame)
         cv.waitKey(1)
