@@ -25,19 +25,19 @@ def set_stream_frame(cap, frame_num):
 
 if __name__ == "__main__":
 
-    video_path = '../../VideoImages/soccer_ex06.avi'
+    video_path = '../../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
     cap = cv.VideoCapture(video_path)
     if not cap.isOpened():
         print(f'file {video_path} not available')
 
-    frames_count = cap.get(cv.CAP_PROP_FRAME_COUNT)
+    frames_count = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
     w = cap.get(cv.CAP_PROP_FRAME_WIDTH)
     h = cap.get(cv.CAP_PROP_FRAME_HEIGHT)
 
     # start stop frames should be paired like [1, 5, 300, 325]
-    start_stop_frames = [400, 405, 600, 605]
+    start_stop_frames = [1, frames_count]
     assert len(start_stop_frames) % 2 == 0
-    assert start_stop_frames[-1] < frames_count
+    assert start_stop_frames[-1] <= frames_count
 
     for rng in range(0, len(start_stop_frames) // 2):
         start = rng * 2
@@ -49,14 +49,14 @@ if __name__ == "__main__":
 
         # repetitive read
         for i in range(start_stop_frames[start], start_stop_frames[start + 1]):
+            current_frame = int(cap.get(cv.CAP_PROP_POS_FRAMES))
             success, frame = cap.read()
             if not success:
                 break
 
-            current_frame = int(cap.get(cv.CAP_PROP_POS_FRAMES))
             image_name = f"{video_path.split('.avi')[0]}_{current_frame}.jpg"
             # save to project path
-            image_name = 'output/' + image_name.split('/')[-1]
+            image_name = '../output/' + image_name.split('/')[-1]
             cv.imwrite(image_name, frame)
 
     cap.release()

@@ -38,19 +38,22 @@ if __name__ == "__main__":
     while True:
         sm.find_next_gt_frame()
         gt = sm.get_gt()
+        if len(gt.keys()) == 1:
+            # annotations ended
+            break
         frame = sm.get_frame()
         if frame is None:
             break
 
-        # run detector
+        # run detector & draw detections
         results = ellipse_detector.detect(frame, width=sm.w)
-
-        # draw gt on image
         for ellipse in results:
             points = ellipse_detector.get_points_from_ellipse(ellipse)
             cv_draw_points(points, frame, color=(0, 0, 255), thickness=2)
 
+        # draw gt on image
         for key in gt.keys():
+            # if key != 'Ellipse':
             if key == 'frame':
                 continue
             gt_draw_object(gt[key], frame)
