@@ -16,7 +16,7 @@ ELLIPSE_PARAM = dict(
     _score=0.67299813,
 )
 
-PI = 3.1415926
+POLYGON_SHAPE_TYPE = "polygon"
 
 
 def execute(cmd):
@@ -30,7 +30,7 @@ def execute(cmd):
         cmd,
         stdout=subprocess.PIPE,
         universal_newlines=False,
-        bufsize=1,  # unbuffered
+        # bufsize=1,  # unbuffered
     )
     for stdout_line in iter(popen.stdout.readline, b''):
         yield stdout_line
@@ -70,8 +70,9 @@ def ellipse_detection_in_subprocess(image):
     for line in execute(command):
         ell = line.split(b"\t")
         if ell[0].decode('utf-8') == 'ellipse':
-            ellipse = {ell_keys[key]: (int(float(el.decode('utf-8').strip())) if key < 4 else float(el.decode('utf-8').strip()))
-                 for key, el in enumerate(ell[1:])}
+            ellipse = {ell_keys[key]: (int(float(el.decode('utf-8').strip()))
+                                       if key < 4 else float(el.decode('utf-8').strip()))
+                       for key, el in enumerate(ell[1:])}
             ellipses.append(ellipse)
 
     if image.shape[0]:
@@ -97,7 +98,7 @@ class ModelLoader:
 
         self.model = EllipseDetector()
 
-    def infer(self, image, threshold=0.85, r_thrd=0, logger=None):
+    def infer(self, image, threshold=0.85, r_thrd=0, shape_type=POLYGON_SHAPE_TYPE, logger=None):
 
         output = self.model.detect([image])[0]
         if image.shape[0]:
@@ -108,34 +109,42 @@ class ModelLoader:
         results = []
         for i in range(len(output)):
             class_id = 0
+            label = self.labels[class_id]
             xc, yc, a, b, rad, score = output[i].values()
             if logger is not None:
                 logger.info(f"xc {xc}, yc {yc}, a {a}, b {b}, rad {rad}, score {score}")
 
             if score >= threshold and b > r_thrd:
-                contour = cv2.ellipse2Poly(
-                    (xc, yc),
-                    (a, b),
-                    int(rad * 180.0 / PI),
-                    0,
-                    360,
-                    int(360 / self.num_points)
-                )
-                label = self.labels[class_id]
+                if shape_type == POLYGON_SHAPE_TYPE:
+                    contour = cv2.ellipse2Poly(
+                        (xc, yc),
+                        (a, b),
+                        int(rad * 180.0 / np.pi),
+                        0,
+                        360,
+                        int(360 / self.num_points)
+                    )
 
-                # filter all points left from center
-                poli_left = np.array([np.concatenate((point, np.array([int(i)])))
-                                      for i, point in enumerate(contour) if point[0] < xc])
-                idx = int(poli_left[np.absolute(poli_left[:, 1] - yc).argmin()][2])
-                # reorganize poligon
-                poligon_first = [point for point in contour[idx:-1]]
-                contour = np.array(poligon_first + [point for point in contour[:idx]] + [poligon_first[0]])
+                    # filter all points left from center
+                    poli_left = np.array([np.concatenate((point, np.array([int(i)])))
+                                          for i, point in enumerate(contour) if point[0] < xc])
+                    idx = int(poli_left[np.absolute(poli_left[:, 1] - yc).argmin()][2])
+                    # reorganize poligon
+                    poligon_first = [point for point in contour[idx:-1]]
+                    contour = np.array(poligon_first + [point for point in contour[:idx]] + [poligon_first[0]])
 
-                results.append({
-                    "confidence": str(score),
-                    "label": label,
-                    "points": contour.ravel().tolist(),
-                    "type": "polygon",
-                })
+                    results.append({
+                        "confidence": str(score),
+                        "label": label,
+                        "points": contour.ravel().tolist(),
+                        "type": shape_type,
+                    })
+                else:
+                    results.append({
+                        "confidence": str(score),
+                        "label": label,
+                        "ellipse": output[i],
+                        "type": shape_type,
+                    })
 
         return results

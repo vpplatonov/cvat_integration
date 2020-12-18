@@ -25,7 +25,8 @@ def set_stream_frame(cap, frame_num):
 
 if __name__ == "__main__":
 
-    video_path = '../../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
+    # video_path = '../../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
+    video_path = '../../VideoImages/14701073_25831_11200_61200.mp4'
     cap = cv.VideoCapture(video_path)
     if not cap.isOpened():
         print(f'file {video_path} not available')
@@ -35,7 +36,8 @@ if __name__ == "__main__":
     h = cap.get(cv.CAP_PROP_FRAME_HEIGHT)
 
     # start stop frames should be paired like [1, 5, 300, 325]
-    start_stop_frames = [1, frames_count]
+    # start_stop_frames = [1, frames_count]
+    start_stop_frames = [2262, 2327]
     assert len(start_stop_frames) % 2 == 0
     assert start_stop_frames[-1] <= frames_count
 
@@ -58,5 +60,6 @@ if __name__ == "__main__":
             # save to project path
             image_name = '../output/' + image_name.split('/')[-1]
             cv.imwrite(image_name, frame)
+            print(F"{current_frame = }")
 
     cap.release()
