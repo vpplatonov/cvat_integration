@@ -26,7 +26,9 @@ def set_stream_frame(cap, frame_num):
 if __name__ == "__main__":
 
     # video_path = '../../AnnotationBenchmarks/14701073_25831_5200_11200.mkv'
-    video_path = '../../VideoImages/14701073_25831_11200_61200.mp4'
+    # video_path = '../../VideoImages/14701073_25831_11200_61200.mp4'
+    # video_path = "../../One_min_Clips/14701101_28860_1min.mp4"
+    video_path = "../../R_side.mp4"
     cap = cv.VideoCapture(video_path)
     if not cap.isOpened():
         print(f'file {video_path} not available')
@@ -37,7 +39,8 @@ if __name__ == "__main__":
 
     # start stop frames should be paired like [1, 5, 300, 325]
     # start_stop_frames = [1, frames_count]
-    start_stop_frames = [2262, 2327]
+    # start_stop_frames = [1, 10, 340, 350, 450, 460, 590, 600, 3600, 3610]
+    start_stop_frames = [0, frames_count]
     assert len(start_stop_frames) % 2 == 0
     assert start_stop_frames[-1] <= frames_count
 

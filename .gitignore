@@ -8,6 +8,7 @@ __pycache__
 *.pyc
 ._*
 .coverage
+output_video/
 output/
 dumps/gt_cvat_for_video_1.1/14701073_25831_11200_61200_mp4_annotations.xml
 images/image_frame.jpg

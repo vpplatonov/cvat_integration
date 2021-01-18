@@ -109,7 +109,7 @@ if __name__ == "__main__":
         if sm.writer is not None:
             sm.writer.release()
 
-        with open(os.path.join('./output', f"{file_name}_ellipses.json"), "w") as fp:
+        with open(os.path.join('output_video', f"{file_name}_ellipses.json"), "w") as fp:
             json.dump(ellipse_detections, fp)
         cv.destroyAllWindows()
         sm.cap.release()
